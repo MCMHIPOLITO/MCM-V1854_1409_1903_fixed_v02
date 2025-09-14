@@ -1,4 +1,9 @@
 export function transformFixture(fix: any) {
+  // 🚫 Skip finished matches
+  if (fix.state_id === 3) {
+    return null;
+  }
+
   const homePart = fix?.participants?.find((p: any) => p?.meta?.location === 'home');
   const awayPart = fix?.participants?.find((p: any) => p?.meta?.location === 'away');
   const homeId = homePart?.id;
@@ -140,11 +145,13 @@ export function transformFixture(fix: any) {
 }
 
 export function flattenRow(tf: any) {
+  if (!tf) return null; // in case transformFixture returned null
+
   const row: any = {
     "Match": tf.matchName,
     "Time": `${tf.minute}'`,
     "Period": tf.periodLabel,
-    "Score\nHome": tf.scoreHome,   
+    "Score\nHome": tf.scoreHome,
     "Score\nAway": tf.scoreAway,
     "Corners\nHome": tf.corners.home,
     "Corners\nAway": tf.corners.away,
@@ -172,8 +179,8 @@ export function flattenRow(tf: any) {
     "Crosses blocked\nAway": tf.crossBlocked.away,
     "Red Card\nHome": tf.reds.home,
     "Red Card\nAway": tf.reds.away,
-    "Speed APPM\nH": tf.speedH,
-    "Speed APPM\nA": tf.speedA,
+    "Speed APPM\nH": tf.speedH.toFixed(2),
+    "Speed APPM\nA": tf.speedA.toFixed(2),
     "Speed\nAcum": tf.speedSum,
     "Blocked Value\nHome": tf.blockedValueHome,
     "Blocked Value\nAway": tf.blockedValueAway,
@@ -189,8 +196,8 @@ export function flattenRow(tf: any) {
     tf.totalShots.home,
     tf.totalShots.away
   );
-  row["WPI\nHome"] = WPI_HOME;
-  row["WPI\nAway"] = WPI_AWAY;
+  row["WPI\nHome"] = WPI_HOME.toFixed(1);
+  row["WPI\nAway"] = WPI_AWAY.toFixed(1);
 
   return row;
 }
@@ -204,7 +211,7 @@ export function calculateWPI(
   const wpiHome = totalShotsHome > 0 ? crossesHome / totalShotsHome : 0;
   const wpiAway = totalShotsAway > 0 ? crossesAway / totalShotsAway : 0;
   return {
-    WPI_HOME: Number(wpiHome.toFixed(1)),
-    WPI_AWAY: Number(wpiAway.toFixed(1)),
+    WPI_HOME: wpiHome,
+    WPI_AWAY: wpiAway,
   };
 }
