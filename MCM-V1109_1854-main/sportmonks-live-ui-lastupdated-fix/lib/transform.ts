@@ -1,6 +1,6 @@
 export function transformFixture(fix: any) {
   // 🚫 Skip finished matches
-  if (fix.state_id === 3) {
+  if (fix.state_id === 5) {
     return null;
   }
 
