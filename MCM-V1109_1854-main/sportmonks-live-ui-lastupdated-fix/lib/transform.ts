@@ -1,6 +1,12 @@
 export function transformFixture(fix: any) {
-  // 🚫 Skip finished matches
-  if (fix.state_id === 5) {
+  // 🚫 Skip finished matches (SportMonks uses 3 or 5 for full-time)
+  if (
+  
+    fix?.state_id === 5 ||
+    fix?.time?.status === 'FT' ||
+    fix?.time?.status === 'FT_PEN' ||
+    fix?.status === 'FT'
+  ) {
     return null;
   }
 
